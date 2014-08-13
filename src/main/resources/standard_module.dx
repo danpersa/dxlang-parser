@@ -1,0 +1,9 @@
+module Standard {
+    func main arg: List : Void { 
+        print "hello"; 
+    }
+    
+    func if cond: Boolean then: Block else: Block : Boolean {
+        cond.is_true: then.call
+    }
+}
