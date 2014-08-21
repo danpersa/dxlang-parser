@@ -1,16 +1,16 @@
 grammar Dx;
 
-prog:   (   module
+prog:   (   moduleDef
         )*
         EOF
         ;
 
-module
-    : 'module' Identifier '{' method*? '}'
+moduleDef
+    : 'module' moduleName '{' functionDef*? '}'
     ;
 
-method
-    : 'func' Identifier (Identifier':' Identifier)* ':' returnType block
+functionDef
+    : 'func' functionName (paramName ':' paramType)* ':' returnType block
     ;
 
 block
@@ -18,9 +18,9 @@ block
     ;
 
 expression
-    : print ';'
-    | methodCall
-    | functionCall
+    : print ';'         # expressionPrint
+    | methodCall        # expressionMethodCall
+    | functionCall      # expressionFunctionCall
     ;
     
 methodCall 
@@ -35,12 +35,24 @@ functionCall
 functionName
     : Identifier
     ;
+    
+moduleName
+    : Identifier
+    ;
 
 object
     : Identifier
     ;
 
 returnType
+    : Identifier
+    ;
+    
+paramName
+    : Identifier
+    ;
+    
+paramType
     : Identifier
     ;
 
