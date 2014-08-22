@@ -1,14 +1,16 @@
 package io.dx.parser.visitor;
 
-import io.dx.domain.Param;
-import io.dx.util.ParamUtils;
+import java.util.List;
+
 import org.dx.parser.DxBaseVisitor;
 import org.dx.parser.DxParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import io.dx.generator.domain.Param;
+
+import io.dx.parser.util.ParamUtils;
 
 /**
  * @author  dpersa
@@ -30,10 +32,12 @@ public class DxPrintVisitor extends DxBaseVisitor<Void> {
 
     @Override
     public Void visitFunctionDef(final DxParser.FunctionDefContext ctx) {
-        LOG.info("visit function def with name: {} and return type: {}", ctx.functionName().getText(), ctx.returnType().getText());
+        LOG.info("visit function def with name: {} and return type: {}", ctx.functionName().getText(),
+            ctx.returnType().getText());
+
         final List<Param> params = ParamUtils.createParamList(ParamUtils.paramNameContextToStrings(ctx.paramName()),
                 ParamUtils.paramTypeContextToStrings(ctx.paramType()));
-        
+
         for (Param param : params) {
             LOG.info("    -> {}", param);
         }
