@@ -4,34 +4,36 @@ import static org.hamcrest.CoreMatchers.is;
 
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import javax.annotation.Nonnull;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.io.CharStreams;
-import io.dx.generator.template.HandlebarsProvider;
-import io.dx.generator.template.TemplateRenderer;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.jknack.handlebars.Handlebars;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.CharStreams;
 
 import com.google.guiceberry.GuiceBerryModule;
 import com.google.guiceberry.junit4.GuiceBerryRule;
 
+import com.google.inject.multibindings.MapBinder;
+
 import io.dx.generator.domain.AccessType;
+import io.dx.generator.domain.Block;
 import io.dx.generator.domain.Clazz;
 import io.dx.generator.domain.Method;
 import io.dx.generator.domain.Param;
-import sun.misc.IOUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
+import io.dx.generator.domain.VariableDeclaration;
+import io.dx.generator.template.HandlebarsProvider;
+import io.dx.generator.template.TemplateRenderer;
 
 public class ClazzTemplateRendererTest {
 
@@ -43,15 +45,23 @@ public class ClazzTemplateRendererTest {
 
     @Test
     public void testPopulateTemplate() throws Exception {
+        final Clazz stringClazz = Clazz.builder("String").build();
+        final Clazz integerClazz = Clazz.builder("Integer").build();
 
-        final Param param1 = Param.of("str", "String");
-        final Param param2 = Param.of("number", "Integer");
+        final Param param1 = Param.of("str", stringClazz);
+        final Param param2 = Param.of("number", integerClazz);
+
+        final Block block =
+            Block.builder()                                                //
+                 .addStatement(VariableDeclaration.of("str", stringClazz)) //
+                 .build();
 
         final Method method =
             Method.builder("methodName", "boolean")             //
                   .withStaticMethod(true)                       //
                   .withAccessType(AccessType.PRIVATE)           //
                   .withParams(ImmutableList.of(param1, param2)) //
+                  .withBlock(block)                             //
                   .build();
 
         final Clazz clazz =
@@ -83,6 +93,11 @@ public class ClazzTemplateRendererTest {
             super.configure();
             bind(TemplateRenderer.class).in(Singleton.class);
             bind(Handlebars.class).toProvider(HandlebarsProvider.class).in(Singleton.class);
+
+            MapBinder<Class, StatementTemplateRenderer> statementClassToTemplateRendererBinder = MapBinder.newMapBinder(
+                    binder(), Class.class, StatementTemplateRenderer.class);
+            statementClassToTemplateRendererBinder.addBinding(VariableDeclaration.class)
+                                                  .to(VariableDeclarationTemplateRenderer.class).in(Singleton.class);
         }
     }
 }

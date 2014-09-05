@@ -1,6 +1,11 @@
 package io.dx.parser.visitor;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+
+import org.antlr.v4.runtime.misc.NotNull;
 
 import org.dx.parser.DxBaseVisitor;
 import org.dx.parser.DxParser;
@@ -8,6 +13,10 @@ import org.dx.parser.DxParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+import io.dx.generator.domain.Clazz;
 import io.dx.generator.domain.Param;
 
 import io.dx.parser.util.ParamUtils;
@@ -19,9 +28,18 @@ public class DxPrintVisitor extends DxBaseVisitor<Void> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DxPrintVisitor.class);
 
+    private Map<String, Clazz> nameToClazz = Maps.newHashMap();
+
     @Override
     public Void visitArg(final DxParser.ArgContext ctx) {
-        return null;
+        LOG.info("visit arg");
+        return super.visitArg(ctx);
+    }
+
+    @Override
+    public Void visitModuleDef(@NotNull final DxParser.ModuleDefContext ctx) {
+        LOG.info("visit module def");
+        return super.visitModuleDef(ctx);
     }
 
     @Override
@@ -36,13 +54,20 @@ public class DxPrintVisitor extends DxBaseVisitor<Void> {
             ctx.returnType().getText());
 
         final List<Param> params = ParamUtils.createParamList(ParamUtils.paramNameContextToStrings(ctx.paramName()),
-                ParamUtils.paramTypeContextToStrings(ctx.paramType()));
+                ParamUtils.paramTypeContextToStrings(ctx.paramType(), getNameToClazz()));
 
         for (Param param : params) {
             LOG.info("    -> {}", param);
         }
 
-        return super.visitFunctionDef(ctx);
+        visitBlock(ctx.block());
+
+        return null;
+    }
+
+    @Nonnull
+    public Map<String, Clazz> getNameToClazz() {
+        return ImmutableMap.copyOf(nameToClazz);
     }
 
     @Override
@@ -66,7 +91,7 @@ public class DxPrintVisitor extends DxBaseVisitor<Void> {
     @Override
     public Void visitMethodCall(final DxParser.MethodCallContext ctx) {
         LOG.info("visit method call");
-        return super.visitMethodCall(ctx);
+        return null;
     }
 
     @Override

@@ -31,7 +31,7 @@ public class HandlebarsProvider implements Provider<Handlebars> {
                     Iterator<Param> iterator = list.iterator();
                     while (iterator.hasNext()) {
                         final Param param = iterator.next();
-                        result.append(param.getParamType()).append(" ").append(param.getParamName());
+                        result.append(param.getClazz().getName()).append(" ").append(param.getParamName());
                         if (iterator.hasNext()) {
                             result.append(", ");
                         }
