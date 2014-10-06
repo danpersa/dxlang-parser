@@ -27,9 +27,12 @@ import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.multibindings.MapBinder;
 
 import io.dx.generator.domain.AccessType;
+import io.dx.generator.domain.Assignment;
 import io.dx.generator.domain.Block;
+import io.dx.generator.domain.CallParam;
 import io.dx.generator.domain.Clazz;
 import io.dx.generator.domain.Method;
+import io.dx.generator.domain.MethodCall;
 import io.dx.generator.domain.Param;
 import io.dx.generator.domain.VariableDeclaration;
 import io.dx.generator.template.HandlebarsProvider;
@@ -51,9 +54,16 @@ public class ClazzTemplateRendererTest {
         final Param param1 = Param.of("str", stringClazz);
         final Param param2 = Param.of("number", integerClazz);
 
+        final MethodCall methodCall =
+            MethodCall.builder("print")                 //
+                      .addParam(CallParam.of("first"))  //
+                      .addParam(CallParam.of("second")) //
+                      .build();
+
         final Block block =
             Block.builder()                                                //
                  .addStatement(VariableDeclaration.of("str", stringClazz)) //
+                 .addStatement(Assignment.of("str", methodCall))           //
                  .build();
 
         final Method method =
@@ -96,8 +106,18 @@ public class ClazzTemplateRendererTest {
 
             MapBinder<Class, StatementTemplateRenderer> statementClassToTemplateRendererBinder = MapBinder.newMapBinder(
                     binder(), Class.class, StatementTemplateRenderer.class);
-            statementClassToTemplateRendererBinder.addBinding(VariableDeclaration.class)
-                                                  .to(VariableDeclarationTemplateRenderer.class).in(Singleton.class);
+
+            statementClassToTemplateRendererBinder.addBinding(VariableDeclaration.class)         //
+                                                  .to(VariableDeclarationTemplateRenderer.class) //
+                                                  .in(Singleton.class);
+
+            statementClassToTemplateRendererBinder.addBinding(MethodCall.class)         //
+                                                  .to(MethodCallTemplateRenderer.class) //
+                                                  .in(Singleton.class);
+
+            statementClassToTemplateRendererBinder.addBinding(Assignment.class)         //
+                                                  .to(AssignmentTemplateRenderer.class) //
+                                                  .in(Singleton.class);
         }
     }
 }

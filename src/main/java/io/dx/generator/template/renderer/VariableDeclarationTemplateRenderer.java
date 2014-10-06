@@ -1,6 +1,7 @@
 package io.dx.generator.template.renderer;
 
 import javax.annotation.Nonnull;
+import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import io.dx.generator.template.domain.VariableDeclarationTemplate;
 /**
  * @author  dpersa
  */
+@Singleton
 public class VariableDeclarationTemplateRenderer
     extends AbstractTemplateRenderer<VariableDeclaration, VariableDeclarationTemplate>
     implements StatementTemplateRenderer<VariableDeclaration, VariableDeclarationTemplate> {

@@ -64,14 +64,4 @@ public class BlockTemplateRenderer extends AbstractTemplateRenderer<Block, Block
     private void setDomainClassToStatementRenderer(Map<Class, StatementTemplateRenderer> statementClassToTemplateRender) {
         domainClassToStatementRenderer = statementClassToTemplateRender;
     }
-
-//    @Inject
-//    private void setStatementTemplateRenderers(@Nonnull final Set<StatementTemplateRenderer> renderers) {
-//        final ImmutableMap.Builder<Class<? extends Statement>, StatementTemplateRenderer> builder = ImmutableMap.builder();
-//        for (final StatementTemplateRenderer renderer : renderers) {
-//            builder.put(renderer.supports(), renderer);
-//        }
-//
-//        domainClassToStatementRenderer = builder.build();
-//    }
 }

@@ -13,7 +13,7 @@ public class Assignment implements Statement {
 
     private final Statement statement;
 
-    private static Assignment of(@Nonnull final String variableName, @Nonnull final Statement statement) {
+    public static Assignment of(@Nonnull final String variableName, @Nonnull final Statement statement) {
         return new Assignment(variableName, statement);
     }
 
